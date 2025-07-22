@@ -1,135 +1,127 @@
-# LinkedIn Job Scraping Automation with n8n
+# Teamleader n8n Node Integration
 
-This project contains an automated workflow for scraping LinkedIn job postings using n8n and the `linkedin-jobs-scraper` package.
+## Overview
+This project is an n8n custom node integration for Teamleader, a popular online CRM platform. The purpose of this integration is to provide a seamless way to connect your workflows in n8n with the various resources offered by Teamleader, including users, contacts, companies, deals, invoices, projects, and more.
 
-## Project Structure
+Currently, this project is **under active development**, meaning features are being continuously added and refined. Please note that there are still many aspects that are not yet complete or that may be subject to change.
 
-- `scrape/` - Contains the LinkedIn scraper script using linkedin-jobs-scraper package
-- `workflows/` - Contains the n8n workflow file for job fetching automation
-- `output/` - Storage for scraped job data and debugging logs
-- `docker-compose.yaml` - Docker configuration for running n8n
-- `Dockerfile` - Custom Docker image configuration with required dependencies
-- `n8n-data/` - Persistent storage for n8n data (created when running Docker)
+## Features
+- OAuth2 authentication with Teamleader.
+- Support for CRUD operations across a variety of Teamleader resources, such as Users, Contacts, Companies, Deals, Tickets, and more.
+- All types of triggers (Webhooks) are supported.
+- Flexible parameter handling to allow customization for each resource operation.
+
+## Unsupported Resources
+The following functions from the Teamleader API were not yet implemented:
+
+1. **Quotations**:
+   - `quotations.list` - List quotations
+   - `quotations.info` - Get a specific quotation
+   - `quotations.delete` - Remove a quotation
+
+2. **Work Types**:
+   - `workTypes.list` - List all work types
+
+3. **Document Templates**:
+   - `documentTemplates.list` - List document templates
+
+4. **Currencies**:
+   - `currencies.exchangeRates` - Get exchange rates
+
+5. **Notes**:
+   - `notes.list` - List notes
+   - `notes.update` - Update a note
+
+6. **Email Tracking**:
+   - `emailTracking.create` - Create new email tracking
+   - `emailTracking.list` - List email tracking records
+
+7. **Closing Days**:
+   - `closingDays.list` - List account closing days
+   - `closingDays.add` - Add a closing day
+   - `closingDays.delete` - Remove a closing day
+
+8. **Day Off Types**:
+   - `dayOffTypes.list` - List day-off types
+
+9. **Activity Types**:
+   - `activityTypes.list` - List all activity types
+
+10. **Level Two Areas (for Addresses)**:
+    - `levelTwoAreas.list` - List address areas
+
+11. **Payment Terms**:
+    - `paymentTerms.list` - List available payment terms
+
+12. **Commercial Discounts**:
+    - `commercialDiscounts.list` - List discounts
+
+13. **Payment Methods**:
+    - `paymentMethods.list` - List payment methods
+
+14. **Projects**:
+    - `projects.create` - Creating projects
+    - `projects.update` - Creating projects
+    - 
+15. **Invoices**:
+    - `invoices.list` - List invoices
+    - `invoices.create` - Creating invoices
+    - `invoices.update` - Creating invoices
+
+16. **Deals**:
+    - `deals.create` - Creating deals
+
+### Why?
+The omitted functions from the `n8n` implementation generally require complex data structures and intricate handling of resource relationships. At this stage, the focus remains on simpler operations and trigger-based functionality. Further development may include these features as data structures and dependencies are refined.
+
+## Disclaimer
+**This project is still in development**, and many functionalities are expected to evolve over time. Please use it with caution in production environments as some features might not be fully stable.
+
+If you have ideas for improvements, feature requests, or encounter issues, please check out the GitHub Issues tab to see what's currently planned or in progress. Feel free to contribute by opening an issue or submitting a pull request.
 
 ## Getting Started
+To use this n8n node:
+1. Clone the repository and install dependencies.
+2. Build the project and link it to your local n8n instance.
+3. Configure the node by providing the necessary credentials (OAuth2 via Teamleader).
 
-1. Install Dependencies
-   - Docker and Docker Compose for running n8n (recommended)
-   - Or Node.js and npm if running directly on your system
+Detailed installation instructions are coming soon!
 
-2. Setup Scraper
-   ```bash
-   cd scrape
-   npm install
-   ```
-
-3. Start n8n
-   Using Docker (recommended):
-   ```bash
-   # Build the custom Docker image
-   docker-compose build
-
-   # Start the container
-   docker-compose up -d
-   ```
-   This will start n8n at http://localhost:5678
-   - Username: admin
-   - Password: yourpassword
-
-   Or run n8n directly if installed on your system:
-   ```bash
-   n8n start
-   ```
-
-4. Import n8n Workflow
-   - Open your n8n instance at http://localhost:5678
-   - Go to Workflows → Import From File
-   - Select `workflows/linkedin-job-fetch.json`
-   - Configure the following:
-     1. Update the Execute Command node's path to match your system
-     2. Set up Google Sheets credentials (see Google Sheets Setup below)
-     3. Update the Google Sheet ID in the Save to Google Sheet node
-
-## Docker Configuration
-
-The project includes a custom Docker setup:
-
-### Dockerfile
-- Based on official n8n image
-- Includes additional dependencies:
-  - linkedin-jobs-scraper
-  - puppeteer
-
-### docker-compose.yaml
-- Uses the custom Dockerfile
-- n8n running on port 5678
-- Basic authentication enabled
-- Timezone set to America/Edmonton
-- Persistent data storage in `./n8n-data`
-
-To change the default credentials, modify the following environment variables in `docker-compose.yaml`:
-- `N8N_BASIC_AUTH_USER`
-- `N8N_BASIC_AUTH_PASSWORD`
-
-## Google Sheets Setup
-
-1. Create a Google Sheet
-   - Create a new sheet with these columns:
-     - Date
-     - Title
-     - Company
-     - Location
-     - Description
-     - Job URL
-     - Applied
-
-2. Set up Google Sheets API
-   - Go to Google Cloud Console
-   - Create a new project
-   - Enable Google Sheets API
-   - Create OAuth 2.0 credentials
-   - Download the credentials JSON file
-
-3. Configure n8n
-   - In n8n, go to Settings → Credentials
-   - Click on "Add Credential"
-   - Select "Google Sheets"
-   - Follow the OAuth2 setup process
-   - Use the downloaded credentials
-
-4. Update Workflow
-   - Open the workflow
-   - Double click the "Save to Google Sheet" node
-   - Update the Sheet ID (from your Google Sheet's URL)
-   - Verify the range matches your sheet name (default: Sheet1!A:G)
+### Requirements
+- Node.js
+- n8n v1.66.0 or later
+- Teamleader API access
 
 ## Usage
+- **Authentication**: This node uses OAuth2 authentication to connect with Teamleader. You need to set up a new integration via Teamleader's Marketplace to obtain your Client ID and Client Secret.
+- **Resources and Operations**: You can add this node to your workflow and use any of the supported resources with the appropriate operations. Parameters are automatically adjusted based on the selected resource.
 
-1. Run the scraper independently:
-   ```bash
-   cd scrape
-   node scrape.js
-   ```
+## Development
+This project is open-source and contributions are highly appreciated. Please ensure that all changes are well-tested and consistent with the existing codebase.
 
-2. Or use the n8n workflow:
-   - Activate the workflow in your n8n instance
-   - The workflow will:
-     - Run daily at 9:00 AM
-     - Scrape LinkedIn jobs
-     - Format the data
-     - Save to your Google Sheet
-   - Monitor the execution in n8n's execution log
+### Running Locally
+- Clone the repository.
+- Run `npm install` to install all required dependencies.
+- Use `npm run build` to build the project.
+- Start an n8n instance linked with this node.
 
-## Output
+### Contribution Guidelines
+- Please follow the coding standards used throughout the project.
+- Open an issue before submitting large changes to discuss your approach.
+- Pull requests are reviewed and merged as time permits.
 
-The scraper will save job data to:
-- `output/jobs_log.json` (when run independently)
-- Your configured Google Sheet (when run via n8n)
+## Roadmap
+- [x] Add support for webhooks and triggers for real-time updates.
+- [x] Improve error handling and logging throughout the node.
+- [ ] Integrate all ressources, actions and parameters from the API
+
+## Issues
+Please report any issues or bugs using the GitHub Issues page. Contributions to resolve these issues are highly welcome.
 
 ## License
+This project is licensed under the MIT License. You are free to use, modify, and distribute this code, provided the original author is credited.
 
-MIT
+---
 
-## Contributing
+Thank you for using and contributing to the Teamleader n8n node integration!
 
-Feel free to submit issues and pull requests. 
